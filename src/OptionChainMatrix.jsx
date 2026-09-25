@@ -1,10 +1,49 @@
 import "./OptionChainMatrix.css";
 
-const ACTIONS = [
-  { label: "BUY", action: "BUY", className: "buy" },
-  { label: "SELL", action: "SELL", className: "sell" },
-  { label: "RU", action: "ROLL_UP", className: "roll-up" },
-  { label: "RD", action: "ROLL_DOWN", className: "roll-down" },
+const CALL_ACTIONS = [
+  {
+    label: "RD",
+    action: "ROLL_DOWN",
+    className: "roll-down",
+  },
+  {
+    label: "RU",
+    action: "ROLL_UP",
+    className: "roll-up",
+  },
+  {
+    label: "SELL",
+    action: "SELL",
+    className: "sell",
+  },
+  {
+    label: "BUY",
+    action: "BUY",
+    className: "buy",
+  },
+];
+
+const PUT_ACTIONS = [
+  {
+    label: "BUY",
+    action: "BUY",
+    className: "buy",
+  },
+  {
+    label: "SELL",
+    action: "SELL",
+    className: "sell",
+  },
+  {
+    label: "RU",
+    action: "ROLL_UP",
+    className: "roll-up",
+  },
+  {
+    label: "RD",
+    action: "ROLL_DOWN",
+    className: "roll-down",
+  },
 ];
 
 function OptionChainMatrix({
@@ -17,17 +56,20 @@ function OptionChainMatrix({
    * Generate strikes around ATM.
    *
    * Example:
+   *
    * atmStrike = 18000
    * strikeCount = 2
    * strikeDistance = 50
    *
    * Result:
+   *
    * 17900
    * 17950
    * 18000
    * 18050
    * 18100
    */
+
   const strikes = Array.from(
     { length: strikeCount * 2 + 1 },
     (_, index) => {
@@ -51,6 +93,7 @@ function OptionChainMatrix({
     <div className="option-chain">
 
       {/* Header */}
+
       <div className="option-chain-header">
 
         <div className="header-section calls-header">
@@ -67,10 +110,13 @@ function OptionChainMatrix({
 
       </div>
 
+
       {/* Rows */}
+
       <div className="option-chain-body">
 
         {strikes.map((strike) => {
+
           const isATM = strike === atmStrike;
 
           return (
@@ -81,10 +127,14 @@ function OptionChainMatrix({
               }`}
             >
 
-              {/* CALL ACTIONS */}
+              {/* =========================
+                  CALL ACTIONS
+                  RD RU SELL BUY
+              ========================== */}
+
               <div className="actions call-actions">
 
-                {ACTIONS.map((item) => (
+                {CALL_ACTIONS.map((item) => (
                   <button
                     key={item.action}
                     className={`action-button ${item.className}`}
@@ -103,15 +153,24 @@ function OptionChainMatrix({
 
               </div>
 
-              {/* STRIKE PRICE */}
+
+              {/* =========================
+                  STRIKE
+              ========================== */}
+
               <div className="strike-price">
                 {strike.toLocaleString()}
               </div>
 
-              {/* PUT ACTIONS */}
+
+              {/* =========================
+                  PUT ACTIONS
+                  BUY SELL RU RD
+              ========================== */}
+
               <div className="actions put-actions">
 
-                {ACTIONS.map((item) => (
+                {PUT_ACTIONS.map((item) => (
                   <button
                     key={item.action}
                     className={`action-button ${item.className}`}
@@ -135,6 +194,7 @@ function OptionChainMatrix({
         })}
 
       </div>
+
     </div>
   );
 }
