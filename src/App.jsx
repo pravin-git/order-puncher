@@ -13,7 +13,7 @@ function App() {
       
       <div className="ticks"></div>
       <OptionChainMatrix
-        atmStrike={18000}
+        atmStrike={23000}
         strikeCount={5}
         strikeDistance={50}
         onAction={handleOptionAction}
