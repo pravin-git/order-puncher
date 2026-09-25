@@ -1,8 +1,11 @@
 
+/* =========================================
+   OPTION CHAIN CONTAINER
+========================================= */
+
 .option-chain {
   width: 100%;
   max-width: 900px;
-
   margin: 20px auto;
 
   font-family: Arial, sans-serif;
@@ -10,11 +13,11 @@
 
   border: 1px solid #d5d5d5;
   border-radius: 6px;
-
   overflow: hidden;
 
-  background: #ffffff;
+  background-color: #ffffff;
 }
+
 
 /* =========================================
    HEADER
@@ -28,7 +31,7 @@
     100px
     1fr;
 
-  background: #f3f4f6;
+  background-color: #f3f4f6;
 
   border-bottom: 1px solid #d5d5d5;
 }
@@ -47,18 +50,19 @@
 }
 
 .strike-header {
+  color: #333333;
+
   border-left: 1px solid #d5d5d5;
   border-right: 1px solid #d5d5d5;
-
-  color: #333333;
 }
 
 .puts-header {
   color: #b91c1c;
 }
 
+
 /* =========================================
-   ROW
+   OPTION ROW
 ========================================= */
 
 .option-row {
@@ -72,30 +76,61 @@
   min-height: 38px;
 
   border-bottom: 1px solid #eeeeee;
+
+  transition: background-color 0.15s ease;
 }
 
 .option-row:last-child {
   border-bottom: none;
 }
 
+
+/* =========================================
+   NORMAL ROW HOVER
+========================================= */
+
+/*
+   Highlight the COMPLETE row when
+   mouse enters the row.
+*/
+
 .option-row:hover {
-  background: #fafafa;
+  background-color: #dbeafe !important;
 }
+
+/*
+   The child elements have their own backgrounds,
+   so explicitly apply the hover color to them too.
+*/
+
+.option-row:hover .actions,
+.option-row:hover .strike-price {
+  background-color: #dbeafe !important;
+}
+
 
 /* =========================================
    ATM ROW
 ========================================= */
 
 .atm-row {
-  background: #fff8dc;
+  background-color: #fffdf2;
 
-  border-top: 1px solid #f0d878;
-  border-bottom: 1px solid #f0d878;
+  border-top: 1px solid #e5c76b;
+  border-bottom: 1px solid #e5c76b;
 }
 
-.atm-row:hover {
-  background: #fff4c4;
+
+/* =========================================
+   ATM ROW HOVER
+========================================= */
+
+.atm-row:hover,
+.atm-row:hover .actions,
+.atm-row:hover .strike-price {
+  background-color: #bfdbfe !important;
 }
+
 
 /* =========================================
    ACTION CONTAINER
@@ -110,6 +145,8 @@
   gap: 3px;
 
   padding: 4px 6px;
+
+  background-color: transparent;
 }
 
 .call-actions {
@@ -120,8 +157,9 @@
   border-left: 1px solid #dddddd;
 }
 
+
 /* =========================================
-   STRIKE
+   STRIKE PRICE
 ========================================= */
 
 .strike-price {
@@ -129,6 +167,8 @@
 
   align-items: center;
   justify-content: center;
+
+  background-color: transparent;
 
   border-left: 1px solid #eeeeee;
   border-right: 1px solid #eeeeee;
@@ -139,13 +179,22 @@
   color: #333333;
 }
 
-.atm-row .strike-price {
-  font-weight: 700;
-  color: #8a5a00;
-}
 
 /* =========================================
-   BUTTON
+   ATM STRIKE
+========================================= */
+
+.atm-row .strike-price {
+  background-color: #fff3cd;
+
+  color: #8a5a00;
+
+  font-weight: 700;
+}
+
+
+/* =========================================
+   ACTION BUTTON
 ========================================= */
 
 .action-button {
@@ -169,33 +218,41 @@
     transform 0.1s ease;
 }
 
+
+/* Button hover */
+
 .action-button:hover {
   opacity: 0.85;
 }
 
+
+/* Button click */
+
 .action-button:active {
   transform: scale(0.95);
 }
+
 
 /* =========================================
    ACTION COLORS
 ========================================= */
 
 .buy {
-  background: #16a34a;
+  background-color: #16a34a;
 }
 
 .sell {
-  background: #dc2626;
+  background-color: #dc2626;
 }
 
 .roll-up {
-  background: #2563eb;
+  background-color: #2563eb;
 }
 
 .roll-down {
-  background: #f59e0b;
+  background-color: #f59e0b;
 }
+
 
 /* =========================================
    RESPONSIVE
