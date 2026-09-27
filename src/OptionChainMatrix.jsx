@@ -1,3 +1,4 @@
+import { useState } from "react";
 import "./OptionChainMatrix.css";
 
 const CALL_ACTIONS = [
@@ -70,6 +71,8 @@ function OptionChainMatrix({
    * 18100
    */
 
+  const [showITM, setShowITM] = useState(true);
+
   const strikes = Array.from(
     { length: strikeCount * 2 + 1 },
     (_, index) => {
@@ -91,6 +94,19 @@ function OptionChainMatrix({
 
   return (
     <div className="option-chain">
+
+      {/* ITM Toggle */}
+
+      <div className="itm-toggle">
+        <label>
+          <input
+            type="checkbox"
+            checked={showITM}
+            onChange={(e) => setShowITM(e.target.checked)}
+          />
+          Display ITM
+        </label>
+      </div>
 
       {/* Header */}
 
@@ -118,6 +134,8 @@ function OptionChainMatrix({
         {strikes.map((strike) => {
 
           const isATM = strike === atmStrike;
+          const isCallITM = strike < atmStrike;
+          const isPutITM = strike > atmStrike;
 
           return (
             <div
@@ -134,7 +152,7 @@ function OptionChainMatrix({
 
               <div className="actions call-actions">
 
-                {CALL_ACTIONS.map((item) => (
+                {(showITM || !isCallITM) && CALL_ACTIONS.map((item) => (
                   <button
                     key={item.action}
                     className={`action-button ${item.className}`}
@@ -170,7 +188,7 @@ function OptionChainMatrix({
 
               <div className="actions put-actions">
 
-                {PUT_ACTIONS.map((item) => (
+                {(showITM || !isPutITM) && PUT_ACTIONS.map((item) => (
                   <button
                     key={item.action}
                     className={`action-button ${item.className}`}
