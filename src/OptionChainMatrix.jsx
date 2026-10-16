@@ -1,50 +1,19 @@
+
 import { useState } from "react";
 import "./OptionChainMatrix.css";
 
 const CALL_ACTIONS = [
-  {
-    label: "RD",
-    action: "ROLL_DOWN",
-    className: "roll-down",
-  },
-  {
-    label: "RU",
-    action: "ROLL_UP",
-    className: "roll-up",
-  },
-  {
-    label: "SELL",
-    action: "SELL",
-    className: "sell",
-  },
-  {
-    label: "BUY",
-    action: "BUY",
-    className: "buy",
-  },
+  { label: "RD", action: "ROLL_DOWN", className: "roll-down" },
+  { label: "RU", action: "ROLL_UP", className: "roll-up" },
+  { label: "SELL", action: "SELL", className: "sell" },
+  { label: "BUY", action: "BUY", className: "buy" },
 ];
 
 const PUT_ACTIONS = [
-  {
-    label: "BUY",
-    action: "BUY",
-    className: "buy",
-  },
-  {
-    label: "SELL",
-    action: "SELL",
-    className: "sell",
-  },
-  {
-    label: "RU",
-    action: "ROLL_UP",
-    className: "roll-up",
-  },
-  {
-    label: "RD",
-    action: "ROLL_DOWN",
-    className: "roll-down",
-  },
+  { label: "BUY", action: "BUY", className: "buy" },
+  { label: "SELL", action: "SELL", className: "sell" },
+  { label: "RU", action: "ROLL_UP", className: "roll-up" },
+  { label: "RD", action: "ROLL_DOWN", className: "roll-down" },
 ];
 
 function OptionChainMatrix({
@@ -53,89 +22,98 @@ function OptionChainMatrix({
   strikeDistance,
   onAction,
 }) {
-  /*
-   * Generate strikes around ATM.
-   *
-   * Example:
-   *
-   * atmStrike = 18000
-   * strikeCount = 2
-   * strikeDistance = 50
-   *
-   * Result:
-   *
-   * 17900
-   * 17950
-   * 18000
-   * 18050
-   * 18100
-   */
-
   const [showITM, setShowITM] = useState(true);
 
-  const strikes = Array.from(
-    { length: strikeCount * 2 + 1 },
-    (_, index) => {
-      const offset = index - strikeCount;
+  // Keep CALL and PUT limit prices independently.
+  const [limitPrices, setLimitPrices] = useState({
+    CALL: {},
+    PUT: {},
+  });
 
-      return atmStrike + offset * strikeDistance;
-    }
+  const strikes = Array.from(
+    { length: Math.max(0, Math.floor(strikeCount)) * 2 + 1 },
+    (_, index) =>
+      atmStrike +
+      (index - Math.floor(Math.max(0, strikeCount))) *
+        strikeDistance
   );
 
+  const handleLimitPriceChange = (type, strike, value) => {
+    setLimitPrices((prev) => ({
+      ...prev,
+      [type]: {
+        ...prev[type],
+        [strike]: value,
+      },
+    }));
+  };
+
   const handleAction = (type, action, strike) => {
+    const price = limitPrices[type][strike];
+
     const payload = {
       type,
       action,
       strike,
+      limitPrice:
+        price === "" || price == null
+          ? null
+          : Number(price),
     };
 
-    onAction(payload);
+    if (typeof onAction === "function") {
+      onAction(payload);
+    }
   };
 
   return (
     <div className="option-chain">
-
-      {/* ITM Toggle */}
-
+      {/* Display ITM toggle */}
       <div className="itm-toggle">
         <label>
           <input
             type="checkbox"
             checked={showITM}
-            onChange={(e) => setShowITM(e.target.checked)}
+            onChange={(event) =>
+              setShowITM(event.target.checked)
+            }
           />
           Display ITM
         </label>
       </div>
 
-      {/* Header */}
-
+      {/* Table header */}
       <div className="option-chain-header">
-
         <div className="header-section calls-header">
           CALLS
+        </div>
+
+        <div className="header-section limit-header">
+          CALL LIMIT
         </div>
 
         <div className="header-section strike-header">
           STRIKE
         </div>
 
+        <div className="header-section limit-header">
+          PUT LIMIT
+        </div>
+
         <div className="header-section puts-header">
           PUTS
         </div>
-
       </div>
 
-
-      {/* Rows */}
-
+      {/* Option rows */}
       <div className="option-chain-body">
-
         {strikes.map((strike) => {
-
           const isATM = strike === atmStrike;
           const isCallITM = strike < atmStrike;
           const isPutITM = strike > atmStrike;
+
+          const showCallSide = showITM || !isCallITM;
+          const showPutSide = showITM || !isPutITM;
 
           return (
             <div
@@ -144,78 +122,102 @@ function OptionChainMatrix({
                 isATM ? "atm-row" : ""
               }`}
             >
-
-              {/* =========================
-                  CALL ACTIONS
-                  RD RU SELL BUY
-              ========================== */}
-
+              {/* CALL ACTIONS: RD RU SELL BUY */}
               <div className="actions call-actions">
-
-                {(showITM || !isCallITM) && CALL_ACTIONS.map((item) => (
-                  <button
-                    key={item.action}
-                    className={`action-button ${item.className}`}
-                    title={`CALL ${item.action} ${strike}`}
-                    onClick={() =>
-                      handleAction(
-                        "CALL",
-                        item.action,
-                        strike
-                      )
-                    }
-                  >
-                    {item.label}
-                  </button>
-                ))}
-
+                {showCallSide &&
+                  CALL_ACTIONS.map((item) => (
+                    <button
+                      key={item.action}
+                      type="button"
+                      className={`action-button ${item.className}`}
+                      title={`CALL ${item.action} ${strike}`}
+                      onClick={() =>
+                        handleAction(
+                          "CALL",
+                          item.action,
+                          strike
+                        )
+                      }
+                    >
+                      {item.label}
+                    </button>
+                  ))}
               </div>
 
+              {/* CALL LIMIT PRICE */}
+              <div className="limit-price-cell">
+                {showCallSide && (
+                  <input
+                    type="number"
+                    className="limit-price"
+                    aria-label={`CALL limit price for ${strike}`}
+                    placeholder="Call Price"
+                    step="any"
+                    value={limitPrices.CALL[strike] ?? ""}
+                    onChange={(event) =>
+                      handleLimitPriceChange(
+                        "CALL",
+                        strike,
+                        event.target.value
+                      )
+                    }
+                  />
+                )}
+              </div>
 
-              {/* =========================
-                  STRIKE
-              ========================== */}
-
+              {/* STRIKE PRICE */}
               <div className="strike-price">
                 {strike.toLocaleString()}
               </div>
 
-
-              {/* =========================
-                  PUT ACTIONS
-                  BUY SELL RU RD
-              ========================== */}
-
-              <div className="actions put-actions">
-
-                {(showITM || !isPutITM) && PUT_ACTIONS.map((item) => (
-                  <button
-                    key={item.action}
-                    className={`action-button ${item.className}`}
-                    title={`PUT ${item.action} ${strike}`}
-                    onClick={() =>
-                      handleAction(
+              {/* PUT LIMIT PRICE */}
+              <div className="limit-price-cell">
+                {showPutSide && (
+                  <input
+                    type="number"
+                    className="limit-price"
+                    aria-label={`PUT limit price for ${strike}`}
+                    placeholder="Put Price"
+                    step="any"
+                    value={limitPrices.PUT[strike] ?? ""}
+                    onChange={(event) =>
+                      handleLimitPriceChange(
                         "PUT",
-                        item.action,
-                        strike
+                        strike,
+                        event.target.value
                       )
                     }
-                  >
-                    {item.label}
-                  </button>
-                ))}
-
+                  />
+                )}
               </div>
 
+              {/* PUT ACTIONS: BUY SELL RU RD */}
+              <div className="actions put-actions">
+                {showPutSide &&
+                  PUT_ACTIONS.map((item) => (
+                    <button
+                      key={item.action}
+                      type="button"
+                      className={`action-button ${item.className}`}
+                      title={`PUT ${item.action} ${strike}`}
+                      onClick={() =>
+                        handleAction(
+                          "PUT",
+                          item.action,
+                          strike
+                        )
+                      }
+                    >
+                      {item.label}
+                    </button>
+                  ))}
+              </div>
             </div>
           );
         })}
-
       </div>
-
     </div>
   );
 }
 
 export default OptionChainMatrix;
-
