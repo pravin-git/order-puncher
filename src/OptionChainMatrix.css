@@ -1,82 +1,149 @@
 
-/* =========================================
-   OPTION CHAIN CONTAINER
-========================================= */
-
 .option-chain {
   width: 100%;
-  max-width: 900px;
+  max-width: 1200px;
   margin: 20px auto;
-
   font-family: Arial, sans-serif;
   font-size: 13px;
-
   border: 1px solid #d5d5d5;
   border-radius: 6px;
   overflow: hidden;
-
   background-color: #ffffff;
 }
 
+.option-chain *,
+.option-chain *::before,
+.option-chain *::after {
+  box-sizing: border-box;
+}
 
-/* =========================================
-   HEADER
-========================================= */
+/* Controls: label and input on the same line */
+.option-chain-controls {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 16px;
+  padding: 15px;
+  background-color: #f8fafc;
+  border-bottom: 1px solid #e5e7eb;
+}
 
+.control-group {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 8px;
+}
+
+.control-group label {
+  font-size: 12px;
+  font-weight: 600;
+  color: #374151;
+  white-space: nowrap;
+}
+
+.control-group select,
+.control-group input {
+  width: 150px;
+  height: 34px;
+  padding: 6px 10px;
+  border: 1px solid #cbd5e1;
+  border-radius: 4px;
+  background-color: #ffffff;
+  color: #111827;
+  font-size: 13px;
+}
+
+.control-group select:focus,
+.control-group input:focus {
+  outline: none;
+  border-color: #2563eb;
+}
+
+.strike-distance-display {
+  display: flex;
+  align-items: center;
+  height: 34px;
+  min-width: 80px;
+  padding: 6px 12px;
+  border: 1px solid #e2e8f0;
+  border-radius: 4px;
+  background-color: #f1f5f9;
+  color: #475569;
+  font-size: 13px;
+  font-weight: 600;
+}
+
+.itm-toggle {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  margin-left: auto;
+  padding: 6px 0;
+}
+
+.itm-toggle label {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 12px;
+  font-weight: 600;
+  color: #333333;
+  white-space: nowrap;
+  cursor: pointer;
+}
+
+.itm-toggle input[type="checkbox"] {
+  margin: 0;
+  cursor: pointer;
+  accent-color: #2563eb;
+}
+
+/* Option chain header */
 .option-chain-header {
   display: grid;
-
-  grid-template-columns:
-    1fr
-    100px
-    1fr;
-
+  grid-template-columns: minmax(0, 1fr) 100px 100px 100px minmax(0, 1fr);
   background-color: #f3f4f6;
-
   border-bottom: 1px solid #d5d5d5;
 }
 
 .header-section {
-  padding: 8px;
-
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 0;
+  padding: 9px 4px;
   text-align: center;
-
-  font-size: 12px;
+  font-size: 11px;
   font-weight: 700;
+  white-space: nowrap;
 }
 
 .calls-header {
   color: #15803d;
+  border-right: 1px solid #dddddd;
+}
+
+.limit-header {
+  color: #555555;
+  border-right: 1px solid #dddddd;
 }
 
 .strike-header {
   color: #333333;
-
-  border-left: 1px solid #d5d5d5;
-  border-right: 1px solid #d5d5d5;
+  border-right: 1px solid #dddddd;
 }
 
 .puts-header {
   color: #b91c1c;
 }
 
-
-/* =========================================
-   OPTION ROW
-========================================= */
-
+/* Strike rows */
 .option-row {
   display: grid;
-
-  grid-template-columns:
-    1fr
-    100px
-    1fr;
-
+  grid-template-columns: minmax(0, 1fr) 100px 100px 100px minmax(0, 1fr);
   min-height: 38px;
-
   border-bottom: 1px solid #eeeeee;
-
   transition: background-color 0.15s ease;
 }
 
@@ -84,68 +151,38 @@
   border-bottom: none;
 }
 
-
-/* =========================================
-   NORMAL ROW HOVER
-========================================= */
-
-/*
-   Highlight the COMPLETE row when
-   mouse enters the row.
-*/
-
 .option-row:hover {
   background-color: #dbeafe !important;
 }
 
-/*
-   The child elements have their own backgrounds,
-   so explicitly apply the hover color to them too.
-*/
-
 .option-row:hover .actions,
+.option-row:hover .limit-price-cell,
 .option-row:hover .strike-price {
   background-color: #dbeafe !important;
 }
 
-
-/* =========================================
-   ATM ROW
-========================================= */
-
+/* ATM highlight */
 .atm-row {
   background-color: #fffdf2;
-
   border-top: 1px solid #e5c76b;
   border-bottom: 1px solid #e5c76b;
 }
 
-
-/* =========================================
-   ATM ROW HOVER
-========================================= */
-
 .atm-row:hover,
 .atm-row:hover .actions,
+.atm-row:hover .limit-price-cell,
 .atm-row:hover .strike-price {
   background-color: #bfdbfe !important;
 }
 
-
-/* =========================================
-   ACTION CONTAINER
-========================================= */
-
+/* Action button groups */
 .actions {
   display: flex;
-
   align-items: center;
   justify-content: center;
-
   gap: 3px;
-
-  padding: 4px 6px;
-
+  padding: 4px 5px;
+  min-width: 0;
   background-color: transparent;
 }
 
@@ -157,85 +194,96 @@
   border-left: 1px solid #dddddd;
 }
 
-
-/* =========================================
-   STRIKE PRICE
-========================================= */
-
-.strike-price {
+/* Limit price cells */
+.limit-price-cell {
   display: flex;
-
   align-items: center;
   justify-content: center;
-
+  min-width: 0;
+  padding: 3px;
   background-color: transparent;
-
-  border-left: 1px solid #eeeeee;
-  border-right: 1px solid #eeeeee;
-
-  font-size: 13px;
-  font-weight: 600;
-
-  color: #333333;
+  border-right: 1px solid #dddddd;
 }
 
+.limit-price {
+  display: block;
+  width: 90px;
+  max-width: 100%;
+  min-width: 0;
+  padding: 5px 4px;
+  border: 1px solid #cccccc;
+  border-radius: 3px;
+  background-color: #ffffff;
+  color: #333333;
+  font-family: inherit;
+  font-size: 12px;
+  text-align: right;
+}
 
-/* =========================================
-   ATM STRIKE
-========================================= */
+.limit-price::placeholder {
+  color: #999999;
+  text-align: center;
+}
+
+.limit-price:focus {
+  outline: 1px solid #2563eb;
+  border-color: #2563eb;
+}
+
+/* Strike price */
+.strike-price {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 0;
+  padding: 4px;
+  background-color: transparent;
+  border-right: 1px solid #dddddd;
+  color: #333333;
+  font-size: 13px;
+  font-weight: 600;
+  text-align: center;
+}
 
 .atm-row .strike-price {
   background-color: #fff3cd;
-
   color: #8a5a00;
-
   font-weight: 700;
 }
 
-
-/* =========================================
-   ACTION BUTTON
-========================================= */
-
+/* Action buttons */
 .action-button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex: 0 1 38px;
   width: 38px;
+  min-width: 0;
   height: 28px;
-
-  padding: 0;
-
+  padding: 0 2px;
   border: none;
   border-radius: 3px;
-
   color: #ffffff;
-
+  font-family: inherit;
   font-size: 10px;
   font-weight: 700;
-
+  white-space: nowrap;
   cursor: pointer;
-
-  transition:
-    opacity 0.15s ease,
-    transform 0.1s ease;
+  transition: opacity 0.15s ease, transform 0.1s ease;
 }
-
-
-/* Button hover */
 
 .action-button:hover {
   opacity: 0.85;
 }
 
-
-/* Button click */
-
 .action-button:active {
   transform: scale(0.95);
 }
 
-
-/* =========================================
-   ACTION COLORS
-========================================= */
+.action-button:focus-visible {
+  outline: 2px solid #111827;
+  outline-offset: 2px;
+}
 
 .buy {
   background-color: #16a34a;
@@ -253,19 +301,19 @@
   background-color: #f59e0b;
 }
 
+/* Validation message */
+.empty-state {
+  padding: 20px;
+  text-align: center;
+  color: #64748b;
+  font-size: 13px;
+}
 
-/* =========================================
-   RESPONSIVE
-========================================= */
-
-@media (max-width: 700px) {
-
+/* Medium screens */
+@media (max-width: 1000px) {
   .option-chain-header,
   .option-row {
-    grid-template-columns:
-      1fr
-      75px
-      1fr;
+    grid-template-columns: minmax(0, 1fr) 82px 82px 82px minmax(0, 1fr);
   }
 
   .actions {
@@ -274,14 +322,110 @@
   }
 
   .action-button {
-    width: 30px;
-    height: 26px;
-
+    flex: 1 1 0;
+    width: auto;
+    height: 27px;
     font-size: 9px;
   }
 
-  .strike-price {
-    font-size: 12px;
+  .limit-price {
+    width: 76px;
+    font-size: 11px;
+  }
+
+  .header-section {
+    font-size: 10px;
+  }
+
+  .option-chain-controls {
+    gap: 12px;
+  }
+
+  .control-group {
+    gap: 6px;
+  }
+
+  .control-group select,
+  .control-group input {
+    width: 125px;
   }
 }
 
+/* Small screens */
+@media (max-width: 600px) {
+  .option-chain {
+    margin: 10px auto;
+    border-radius: 4px;
+  }
+
+  .option-chain-controls {
+    gap: 10px;
+    padding: 10px;
+  }
+
+  .control-group {
+    gap: 6px;
+  }
+
+  .control-group label {
+    font-size: 11px;
+  }
+
+  .control-group select,
+  .control-group input {
+    width: 110px;
+    height: 32px;
+    padding: 5px 6px;
+    font-size: 12px;
+  }
+
+  .strike-distance-display {
+    height: 32px;
+    min-width: 55px;
+    padding: 5px 8px;
+    font-size: 12px;
+  }
+
+  .itm-toggle {
+    margin-left: 0;
+  }
+
+  .option-chain-header,
+  .option-row {
+    grid-template-columns: minmax(0, 1fr) 60px 68px 60px minmax(0, 1fr);
+  }
+
+  .header-section {
+    padding: 8px 1px;
+    font-size: 9px;
+    white-space: normal;
+  }
+
+  .actions {
+    gap: 2px;
+    padding: 3px 2px;
+  }
+
+  .action-button {
+    flex: 1 1 0;
+    width: auto;
+    height: 25px;
+    padding: 0 1px;
+    font-size: 8px;
+  }
+
+  .limit-price-cell {
+    padding: 2px;
+  }
+
+  .limit-price {
+    width: 100%;
+    padding: 5px 1px;
+    font-size: 10px;
+  }
+
+  .strike-price {
+    padding: 2px;
+    font-size: 11px;
+  }
+}

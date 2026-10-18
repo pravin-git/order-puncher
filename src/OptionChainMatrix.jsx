@@ -2,6 +2,19 @@
 import { useState } from "react";
 import "./OptionChainMatrix.css";
 
+const UNDERLYINGS = {
+  NIFTY: {
+    label: "NIFTY",
+    defaultATM: 25000,
+    strikeDistance: 50,
+  },
+  SENSEX: {
+    label: "SENSEX",
+    defaultATM: 80000,
+    strikeDistance: 100,
+  },
+};
+
 const CALL_ACTIONS = [
   { label: "RD", action: "ROLL_DOWN", className: "roll-down" },
   { label: "RU", action: "ROLL_UP", className: "roll-up" },
@@ -17,26 +30,62 @@ const PUT_ACTIONS = [
 ];
 
 function OptionChainMatrix({
-  atmStrike,
-  strikeCount,
+  atmStrike = 25000,
+  strikeCount = 5,
   strikeDistance,
   onAction,
 }) {
+  const [underlying, setUnderlying] = useState("NIFTY");
+  const [currentATM, setCurrentATM] = useState(String(atmStrike));
   const [showITM, setShowITM] = useState(true);
 
-  // Keep CALL and PUT limit prices independently.
   const [limitPrices, setLimitPrices] = useState({
     CALL: {},
     PUT: {},
   });
 
-  const strikes = Array.from(
-    { length: Math.max(0, Math.floor(strikeCount)) * 2 + 1 },
-    (_, index) =>
-      atmStrike +
-      (index - Math.floor(Math.max(0, strikeCount))) *
-        strikeDistance
+  const currentStrikeDistance =
+    strikeDistance ?? UNDERLYINGS[underlying].strikeDistance;
+
+  const rowCount = Math.max(
+    0,
+    Math.floor(Number(strikeCount) || 0)
   );
+
+  const parsedATM = Number(currentATM);
+
+  const validATM =
+    currentATM.trim() !== "" &&
+    Number.isFinite(parsedATM) &&
+    parsedATM > 0;
+
+  // Generate strikes around the selected ATM.
+  const strikes = validATM
+    ? Array.from(
+        { length: rowCount * 2 + 1 },
+        (_, index) =>
+          parsedATM +
+          (index - rowCount) * currentStrikeDistance
+      )
+    : [];
+
+  const handleUnderlyingChange = (event) => {
+    const selected = event.target.value;
+
+    setUnderlying(selected);
+    setCurrentATM(
+      String(UNDERLYINGS[selected].defaultATM)
+    );
+
+    setLimitPrices({
+      CALL: {},
+      PUT: {},
+    });
+  };
+
+  const handleATMChange = (event) => {
+    setCurrentATM(event.target.value);
+  };
 
   const handleLimitPriceChange = (type, strike, value) => {
     setLimitPrices((prev) => ({
@@ -52,6 +101,7 @@ function OptionChainMatrix({
     const price = limitPrices[type][strike];
 
     const payload = {
+      underlying,
       type,
       action,
       strike,
@@ -68,21 +118,67 @@ function OptionChainMatrix({
 
   return (
     <div className="option-chain">
-      {/* Display ITM toggle */}
-      <div className="itm-toggle">
-        <label>
+      {/* UNDERLYING AND ATM CONTROLS */}
+      <div className="option-chain-controls">
+        <div className="control-group">
+          <label htmlFor="underlying">
+            Underlying
+          </label>
+
+          <select
+            id="underlying"
+            value={underlying}
+            onChange={handleUnderlyingChange}
+          >
+            {Object.entries(UNDERLYINGS).map(
+              ([key, config]) => (
+                <option key={key} value={key}>
+                  {config.label}
+                </option>
+              )
+            )}
+          </select>
+        </div>
+
+        <div className="control-group">
+          <label htmlFor="atm-strike">
+            ATM Strike
+          </label>
+
           <input
-            type="checkbox"
-            checked={showITM}
-            onChange={(event) =>
-              setShowITM(event.target.checked)
-            }
+            id="atm-strike"
+            type="number"
+            min="1"
+            step="any"
+            value={currentATM}
+            onChange={handleATMChange}
+            placeholder="Enter ATM strike"
           />
-          Display ITM
-        </label>
+        </div>
+
+        <div className="control-group">
+          <label>Strike Distance</label>
+
+          <div className="strike-distance-display">
+            {currentStrikeDistance}
+          </div>
+        </div>
+
+        <div className="itm-toggle">
+          <label>
+            <input
+              type="checkbox"
+              checked={showITM}
+              onChange={(event) =>
+                setShowITM(event.target.checked)
+              }
+            />
+            Display ITM
+          </label>
+        </div>
       </div>
 
-      {/* Table header */}
+      {/* TABLE HEADER */}
       <div className="option-chain-header">
         <div className="header-section calls-header">
           CALLS
@@ -105,12 +201,12 @@ function OptionChainMatrix({
         </div>
       </div>
 
-      {/* Option rows */}
+      {/* OPTION ROWS */}
       <div className="option-chain-body">
         {strikes.map((strike) => {
-          const isATM = strike === atmStrike;
-          const isCallITM = strike < atmStrike;
-          const isPutITM = strike > atmStrike;
+          const isATM = strike === parsedATM;
+          const isCallITM = strike < parsedATM;
+          const isPutITM = strike > parsedATM;
 
           const showCallSide = showITM || !isCallITM;
           const showPutSide = showITM || !isPutITM;
@@ -167,7 +263,7 @@ function OptionChainMatrix({
 
               {/* STRIKE PRICE */}
               <div className="strike-price">
-                {strike.toLocaleString()}
+                {strike.toLocaleString("en-IN")}
               </div>
 
               {/* PUT LIMIT PRICE */}
@@ -215,6 +311,12 @@ function OptionChainMatrix({
             </div>
           );
         })}
+
+        {!validATM && (
+          <div className="empty-state">
+            Enter a valid positive ATM strike to display strikes.
+          </div>
+        )}
       </div>
     </div>
   );
