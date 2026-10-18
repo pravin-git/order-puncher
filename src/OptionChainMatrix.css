@@ -17,7 +17,7 @@
   box-sizing: border-box;
 }
 
-/* Controls: labels and controls on one line */
+/* Controls */
 .option-chain-controls {
   display: flex;
   align-items: center;
@@ -99,7 +99,7 @@
   accent-color: #2563eb;
 }
 
-/* Header */
+/* Option-chain header */
 .option-chain-header {
   display: grid;
   grid-template-columns: minmax(0, 1fr) 100px 100px 100px minmax(0, 1fr);
@@ -138,7 +138,7 @@
   color: #b91c1c;
 }
 
-/* Rows */
+/* Strike rows */
 .option-row {
   display: grid;
   grid-template-columns: minmax(0, 1fr) 100px 100px 100px minmax(0, 1fr);
@@ -161,7 +161,7 @@
   background-color: #dbeafe !important;
 }
 
-/* ATM highlight */
+/* ATM row */
 .atm-row {
   background-color: #fffdf2;
   border-top: 1px solid #e5c76b;
@@ -200,7 +200,7 @@
   border-left: 1px solid #dddddd;
 }
 
-/* Limit price fields */
+/* Limit price cells */
 .limit-price-cell {
   display: flex;
   align-items: center;
@@ -301,7 +301,7 @@
   background-color: #f59e0b;
 }
 
-/* Empty state */
+/* Validation message */
 .empty-state {
   padding: 20px;
   text-align: center;

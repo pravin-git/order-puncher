@@ -36,6 +36,64 @@ const PUT_ACTIONS = [
   { label: "RD", action: "ROLL_DOWN", className: "roll-down" },
 ];
 
+// Format dates using local calendar values, avoiding UTC date shifts.
+function formatDate(date) {
+  const year = date.getFullYear();
+  const month = String(date.getMonth() + 1).padStart(2, "0");
+  const day = String(date.getDate()).padStart(2, "0");
+
+  return `${year}-${month}-${day}`;
+}
+
+// Return the nearest six expiry dates, including today's date
+// when today itself matches the configured expiry weekday.
+function getExpiryDates(underlying) {
+  const today = new Date();
+  today.setHours(0, 0, 0, 0);
+
+  const dates = [];
+
+  if (underlying === "NIFTY" || underlying === "SENSEX") {
+    const expiryDay = underlying === "NIFTY" ? 2 : 4;
+    const date = new Date(today);
+
+    while (dates.length < 6) {
+      if (date.getDay() === expiryDay) {
+        dates.push(formatDate(date));
+      }
+
+      date.setDate(date.getDate() + 1);
+    }
+  } else {
+    // Default rule for any additional underlying:
+    // last Tuesday of each month.
+    const date = new Date(today.getFullYear(), today.getMonth(), 1);
+
+    while (dates.length < 6) {
+      const year = date.getFullYear();
+      const month = date.getMonth();
+
+      // Day zero of the following month is the last day
+      // of the current month.
+      const lastDay = new Date(year, month + 1, 0);
+
+      // Tuesday = 2. Walk backward from the month's last day.
+      lastDay.setDate(
+        lastDay.getDate() - ((lastDay.getDay() - 2 + 7) % 7)
+      );
+      lastDay.setHours(0, 0, 0, 0);
+
+      if (lastDay >= today) {
+        dates.push(formatDate(lastDay));
+      }
+
+      date.setMonth(date.getMonth() + 1);
+    }
+  }
+
+  return dates;
+}
+
 function OptionChainMatrix({
   atmStrike = 25000,
   strikeCount = 5,
@@ -44,15 +102,23 @@ function OptionChainMatrix({
 }) {
   const [underlying, setUnderlying] = useState("NIFTY");
   const [currentATM, setCurrentATM] = useState(String(atmStrike));
-  const [selectedStrikeCount, setSelectedStrikeCount] =
-    useState(Number(strikeCount) || 5);
+  const [selectedStrikeCount, setSelectedStrikeCount] = useState(
+    Number(strikeCount) || 5
+  );
+  const [expiry, setExpiry] = useState(() => getExpiryDates("NIFTY")[0]);
   const [showITM, setShowITM] = useState(true);
 
   const [limitPrices, setLimitPrices] = useState({
     CALL: {},
     PUT: {},
   });
-const currentStrikeDistance = UNDERLYINGS[underlying].strikeDistance;
+
+  // Always use the configured distance for the selected underlying.
+  const currentStrikeDistance = UNDERLYINGS[underlying]
+    ? UNDERLYINGS[underlying].strikeDistance
+    : strikeDistance ?? 50;
+
+  const expiryOptions = getExpiryDates(underlying);
 
   const rowCount = Math.max(
     0,
@@ -78,7 +144,12 @@ const currentStrikeDistance = UNDERLYINGS[underlying].strikeDistance;
     const selected = event.target.value;
 
     setUnderlying(selected);
-    setCurrentATM(String(UNDERLYINGS[selected].defaultATM));
+
+    if (UNDERLYINGS[selected]) {
+      setCurrentATM(String(UNDERLYINGS[selected].defaultATM));
+    }
+
+    setExpiry(getExpiryDates(selected)[0]);
 
     setLimitPrices({
       CALL: {},
@@ -92,6 +163,10 @@ const currentStrikeDistance = UNDERLYINGS[underlying].strikeDistance;
 
   const handleStrikeCountChange = (event) => {
     setSelectedStrikeCount(Number(event.target.value));
+  };
+
+  const handleExpiryChange = (event) => {
+    setExpiry(event.target.value);
   };
 
   const handleLimitPriceChange = (type, strike, value) => {
@@ -109,6 +184,7 @@ const currentStrikeDistance = UNDERLYINGS[underlying].strikeDistance;
 
     const payload = {
       underlying,
+      expiry,
       type,
       action,
       strike,
@@ -134,6 +210,21 @@ const currentStrikeDistance = UNDERLYINGS[underlying].strikeDistance;
             {Object.entries(UNDERLYINGS).map(([key, config]) => (
               <option key={key} value={key}>
                 {config.label}
+              </option>
+            ))}
+          </select>
+        </div>
+
+        <div className="control-group">
+          <label htmlFor="expiry-date">Expiry Date</label>
+          <select
+            id="expiry-date"
+            value={expiry}
+            onChange={handleExpiryChange}
+          >
+            {expiryOptions.map((date) => (
+              <option key={date} value={date}>
+                {date}
               </option>
             ))}
           </select>
