@@ -13,7 +13,7 @@ const UNDERLYINGS = {
     defaultATM: 80000,
     strikeDistance: 100,
   },
-    RELIANCE: {
+  RELIANCE: {
     label: "RELIANCE",
     defaultATM: 1200,
     strikeDistance: 20,
@@ -51,6 +51,7 @@ function getExpiryDates(underlying) {
   const dates = [];
 
   if (underlying === "NIFTY" || underlying === "SENSEX") {
+    // NIFTY: Tuesday (2), SENSEX: Thursday (4).
     const expiryDay = underlying === "NIFTY" ? 2 : 4;
     const date = new Date(today);
 
@@ -62,7 +63,8 @@ function getExpiryDates(underlying) {
       date.setDate(date.getDate() + 1);
     }
   } else {
-    // Default expiry: last Tuesday of each month.
+    // Default rule for additional underlyings:
+    // last Tuesday of each month.
     const date = new Date(today.getFullYear(), today.getMonth(), 1);
 
     while (dates.length < 6) {
@@ -94,10 +96,13 @@ function OptionChainMatrix({
 }) {
   const [underlying, setUnderlying] = useState("NIFTY");
   const [currentATM, setCurrentATM] = useState(String(atmStrike));
+
   const [selectedStrikeCount, setSelectedStrikeCount] = useState(
     Number(strikeCount) || 5
   );
+
   const [expiry, setExpiry] = useState(() => getExpiryDates("NIFTY")[0]);
+  const [quantity, setQuantity] = useState("1");
   const [showITM, setShowITM] = useState(true);
 
   const [limitPrices, setLimitPrices] = useState({
@@ -126,10 +131,10 @@ function OptionChainMatrix({
 
   const strikes = validATM
     ? Array.from(
-        { length: rowCount * 2 + 1 },
-        (_, index) =>
-          parsedATM + (index - rowCount) * currentStrikeDistance
-      )
+      { length: rowCount * 2 + 1 },
+      (_, index) =>
+        parsedATM + (index - rowCount) * currentStrikeDistance
+    )
     : [];
 
   const handleUnderlyingChange = (event) => {
@@ -151,6 +156,7 @@ function OptionChainMatrix({
 
   const handleAction = (type, action, strike) => {
     const price = limitPrices[type][strike];
+    const parsedQuantity = quantity.trim() === "" ? null : Number(quantity);
 
     const payload = {
       underlying,
@@ -160,6 +166,7 @@ function OptionChainMatrix({
       strike,
       limitPrice:
         price === "" || price == null ? null : Number(price),
+      quantity: parsedQuantity,
     };
 
     if (typeof onAction === "function") {
@@ -179,7 +186,7 @@ function OptionChainMatrix({
 
   return (
     <div className="option-chain">
-      {/* Compact toolbar */}
+      {/* Toolbar */}
       <div className="option-chain-controls">
         <div className="control-group">
           <label htmlFor="underlying">Underlying</label>
@@ -239,6 +246,19 @@ function OptionChainMatrix({
               </option>
             ))}
           </select>
+        </div>
+
+        <div className="control-group">
+          <label htmlFor="quantity">Quantity</label>
+          <input
+            id="quantity"
+            type="number"
+            min="1"
+            step="1"
+            value={quantity}
+            onChange={(event) => setQuantity(event.target.value)}
+            placeholder="Enter quantity"
+          />
         </div>
 
         <div className="control-group">

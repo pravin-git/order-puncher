@@ -112,34 +112,39 @@
   font-variant-numeric: tabular-nums;
 }
 
-/* Display ITM checkbox */
+/* Display ITM: label above checkbox */
 .itm-toggle {
   display: flex;
-  align-items: center;
-  align-self: end;
-  min-height: 30px;
-  margin-left: 0;
-  padding: 0 2px 7px;
+  flex-direction: column;
+  align-items: flex-start;
+  justify-content: flex-end;
+  gap: 5px;
+  min-width: 0;
+  width: 100%;
+  min-height: auto;
+  margin: 0;
+  padding: 0;
 }
 
 .itm-toggle label {
-  display: inline-flex;
-  align-items: center;
-  justify-content: flex-start;
-  gap: 6px;
+  display: block;
+  width: 100%;
   margin: 0;
-  color: #334155;
+  color: #475569;
   font-size: 11px;
   font-weight: 600;
+  line-height: 1.2;
   text-align: left;
   white-space: nowrap;
   cursor: pointer;
 }
 
 .itm-toggle input[type="checkbox"] {
-  width: 14px;
-  height: 14px;
+  display: block;
+  width: 30px;
+  height: 30px;
   margin: 0;
+  padding: 7px;
   accent-color: #2563eb;
   cursor: pointer;
 }
@@ -408,7 +413,8 @@
     padding: 10px;
   }
 
-  .control-group label {
+  .control-group label,
+  .itm-toggle label {
     font-size: 10px;
   }
 
@@ -420,8 +426,13 @@
   }
 
   .itm-toggle {
-    align-self: center;
-    padding: 0 2px;
+    align-self: end;
+    padding: 0;
+  }
+
+  .itm-toggle input[type="checkbox"] {
+    width: 29px;
+    height: 29px;
   }
 
   .option-chain-header,
