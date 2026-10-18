@@ -13,6 +13,11 @@ const UNDERLYINGS = {
     defaultATM: 80000,
     strikeDistance: 100,
   },
+  RELIANCE: {
+    label: "RELIANCE",
+    defaultATM: 1200,
+    strikeDistance: 20,
+  },
 };
 
 const STRIKE_COUNT_OPTIONS = [1, 2, 3, 5, 10, 15, 20, 25, 30];
