@@ -1,14 +1,15 @@
 
+/* Main container */
 .option-chain {
   width: 100%;
   max-width: 1200px;
-  margin: 20px auto;
+  margin: 16px auto;
   font-family: Arial, sans-serif;
   font-size: 13px;
-  border: 1px solid #d5d5d5;
+  border: 1px solid #d5dbe5;
   border-radius: 6px;
   overflow: hidden;
-  background-color: #ffffff;
+  background: #ffffff;
 }
 
 .option-chain *,
@@ -17,94 +18,139 @@
   box-sizing: border-box;
 }
 
-/* Controls */
+/* Compact multi-column toolbar */
 .option-chain-controls {
-  display: flex;
-  align-items: center;
-  flex-wrap: wrap;
-  gap: 16px;
-  padding: 15px;
-  background-color: #f8fafc;
-  border-bottom: 1px solid #e5e7eb;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(125px, 1fr));
+  align-items: end;
+  gap: 10px;
+  padding: 10px 12px;
+  background: #f8fafc;
+  border-bottom: 1px solid #e2e8f0;
 }
 
+/* Labels above controls, left-aligned */
 .control-group {
   display: flex;
-  flex-direction: row;
-  align-items: center;
-  gap: 8px;
+  flex-direction: column;
+  align-items: flex-start;
+  justify-content: flex-start;
+  gap: 5px;
+  min-width: 0;
+  width: 100%;
 }
 
 .control-group label {
-  font-size: 12px;
+  display: block;
+  width: 100%;
+  margin: 0;
+  color: #475569;
+  font-size: 11px;
   font-weight: 600;
-  color: #374151;
+  line-height: 1.2;
+  text-align: left;
   white-space: nowrap;
 }
 
+/* Dropdowns and input fields */
 .control-group select,
 .control-group input {
-  width: 125px;
-  height: 34px;
-  padding: 6px 10px;
+  display: block;
+  width: 100%;
+  min-width: 0;
+  height: 30px;
+  margin: 0;
+  padding: 4px 7px;
   border: 1px solid #cbd5e1;
   border-radius: 4px;
-  background-color: #ffffff;
-  color: #111827;
-  font-size: 13px;
+  background: #ffffff;
+  color: #1e293b;
+  font-family: inherit;
+  font-size: 12px;
+  text-align: left;
+  box-shadow: 0 1px 1px rgb(15 23 42 / 3%);
+  transition: border-color 0.15s ease, box-shadow 0.15s ease;
+}
+
+.control-group select {
+  cursor: pointer;
+}
+
+.control-group input[type="number"] {
+  text-align: left;
+}
+
+.control-group select:hover,
+.control-group input:hover {
+  border-color: #94a3b8;
 }
 
 .control-group select:focus,
 .control-group input:focus {
   outline: none;
-  border-color: #2563eb;
+  border-color: #3b82f6;
+  box-shadow: 0 0 0 2px rgb(59 130 246 / 12%);
 }
 
+/* Strike distance display */
 .strike-distance-display {
   display: flex;
   align-items: center;
-  height: 34px;
-  min-width: 80px;
-  padding: 6px 12px;
-  border: 1px solid #e2e8f0;
+  justify-content: flex-start;
+  width: 100%;
+  min-width: 0;
+  height: 30px;
+  margin: 0;
+  padding: 4px 7px;
+  border: 1px solid #dbe3ed;
   border-radius: 4px;
-  background-color: #f1f5f9;
-  color: #475569;
-  font-size: 13px;
-  font-weight: 600;
+  background: #eef2f7;
+  color: #334155;
+  font-size: 12px;
+  font-weight: 700;
+  text-align: left;
+  font-variant-numeric: tabular-nums;
 }
 
+/* Display ITM checkbox */
 .itm-toggle {
   display: flex;
   align-items: center;
-  justify-content: flex-end;
-  margin-left: auto;
-  padding: 6px 0;
+  align-self: end;
+  min-height: 30px;
+  margin-left: 0;
+  padding: 0 2px 7px;
 }
 
 .itm-toggle label {
-  display: flex;
+  display: inline-flex;
   align-items: center;
+  justify-content: flex-start;
   gap: 6px;
-  font-size: 12px;
+  margin: 0;
+  color: #334155;
+  font-size: 11px;
   font-weight: 600;
-  color: #333333;
+  text-align: left;
   white-space: nowrap;
   cursor: pointer;
 }
 
 .itm-toggle input[type="checkbox"] {
+  width: 14px;
+  height: 14px;
   margin: 0;
-  cursor: pointer;
   accent-color: #2563eb;
+  cursor: pointer;
 }
 
 /* Option-chain header */
 .option-chain-header {
   display: grid;
-  grid-template-columns: minmax(0, 1fr) 100px 100px 100px minmax(0, 1fr);
-  background-color: #f3f4f6;
-  border-bottom: 1px solid #d5d5d5;
+  grid-template-columns:
+    minmax(0, 1fr) 100px 100px 100px minmax(0, 1fr);
+  background: #f1f5f9;
+  border-bottom: 1px solid #d5dbe5;
 }
 
 .header-section {
@@ -112,49 +158,48 @@
   align-items: center;
   justify-content: center;
   min-width: 0;
-  padding: 9px 4px;
+  padding: 8px 4px;
   text-align: center;
-  font-size: 11px;
+  font-size: 10px;
   font-weight: 700;
+  letter-spacing: 0.3px;
   white-space: nowrap;
 }
 
 .calls-header {
   color: #15803d;
-  border-right: 1px solid #dddddd;
+  border-right: 1px solid #dbe1e8;
 }
 
 .limit-header {
-  color: #555555;
-  border-right: 1px solid #dddddd;
+  color: #64748b;
+  border-right: 1px solid #dbe1e8;
 }
 
 .strike-header {
-  color: #333333;
-  border-right: 1px solid #dddddd;
+  color: #334155;
+  border-right: 1px solid #dbe1e8;
 }
 
 .puts-header {
   color: #b91c1c;
 }
 
-/* Strike rows */
+/* Matrix rows */
 .option-row {
   display: grid;
-  grid-template-columns: minmax(0, 1fr) 100px 100px 100px minmax(0, 1fr);
+  grid-template-columns:
+    minmax(0, 1fr) 100px 100px 100px minmax(0, 1fr);
   min-height: 38px;
-  border-bottom: 1px solid #eeeeee;
-  transition: background-color 0.15s ease;
+  border-bottom: 1px solid #edf0f4;
+  transition: background-color 0.12s ease;
 }
 
 .option-row:last-child {
   border-bottom: none;
 }
 
-.option-row:hover {
-  background-color: #dbeafe !important;
-}
-
+.option-row:hover,
 .option-row:hover .actions,
 .option-row:hover .limit-price-cell,
 .option-row:hover .strike-price {
@@ -163,13 +208,13 @@
 
 /* ATM row */
 .atm-row {
-  background-color: #fffdf2;
+  background: #fffdf2;
   border-top: 1px solid #e5c76b;
   border-bottom: 1px solid #e5c76b;
 }
 
 .atm-row .strike-price {
-  background-color: #fff3cd;
+  background: #fff3cd;
   color: #8a5a00;
   font-weight: 700;
 }
@@ -181,23 +226,23 @@
   background-color: #bfdbfe !important;
 }
 
-/* Action groups */
+/* Action button groups */
 .actions {
   display: flex;
   align-items: center;
   justify-content: center;
   gap: 3px;
-  padding: 4px 5px;
   min-width: 0;
-  background-color: transparent;
+  padding: 4px;
+  background: transparent;
 }
 
 .call-actions {
-  border-right: 1px solid #dddddd;
+  border-right: 1px solid #dbe1e8;
 }
 
 .put-actions {
-  border-left: 1px solid #dddddd;
+  border-left: 1px solid #dbe1e8;
 }
 
 /* Limit price cells */
@@ -207,8 +252,8 @@
   justify-content: center;
   min-width: 0;
   padding: 3px;
-  background-color: transparent;
-  border-right: 1px solid #dddddd;
+  background: transparent;
+  border-right: 1px solid #dbe1e8;
 }
 
 .limit-price {
@@ -216,24 +261,27 @@
   width: 90px;
   max-width: 100%;
   min-width: 0;
-  padding: 5px 4px;
-  border: 1px solid #cccccc;
+  height: 27px;
+  margin: 0;
+  padding: 4px 5px;
+  border: 1px solid #cbd5e1;
   border-radius: 3px;
-  background-color: #ffffff;
-  color: #333333;
+  background: #ffffff;
+  color: #1e293b;
   font-family: inherit;
-  font-size: 12px;
+  font-size: 11px;
   text-align: right;
 }
 
 .limit-price::placeholder {
-  color: #999999;
+  color: #94a3b8;
   text-align: center;
 }
 
 .limit-price:focus {
-  outline: 1px solid #2563eb;
-  border-color: #2563eb;
+  outline: none;
+  border-color: #3b82f6;
+  box-shadow: 0 0 0 2px rgb(59 130 246 / 12%);
 }
 
 /* Strike price */
@@ -243,12 +291,13 @@
   justify-content: center;
   min-width: 0;
   padding: 4px;
-  background-color: transparent;
-  border-right: 1px solid #dddddd;
-  color: #333333;
-  font-size: 13px;
+  background: transparent;
+  border-right: 1px solid #dbe1e8;
+  color: #334155;
+  font-size: 12px;
   font-weight: 600;
   text-align: center;
+  font-variant-numeric: tabular-nums;
 }
 
 /* Action buttons */
@@ -259,7 +308,8 @@
   flex: 0 1 38px;
   width: 38px;
   min-width: 0;
-  height: 28px;
+  height: 27px;
+  margin: 0;
   padding: 0 2px;
   border: none;
   border-radius: 3px;
@@ -269,7 +319,7 @@
   font-weight: 700;
   white-space: nowrap;
   cursor: pointer;
-  transition: opacity 0.15s ease, transform 0.1s ease;
+  transition: opacity 0.12s ease, transform 0.1s ease;
 }
 
 .action-button:hover {
@@ -286,47 +336,41 @@
 }
 
 .buy {
-  background-color: #16a34a;
+  background: #16a34a;
 }
 
 .sell {
-  background-color: #dc2626;
+  background: #dc2626;
 }
 
 .roll-up {
-  background-color: #2563eb;
+  background: #2563eb;
 }
 
 .roll-down {
-  background-color: #f59e0b;
+  background: #f59e0b;
 }
 
-/* Validation message */
+/* Invalid ATM message */
 .empty-state {
   padding: 20px;
-  text-align: center;
   color: #64748b;
   font-size: 13px;
+  text-align: center;
 }
 
-/* Medium screens */
-@media (max-width: 1000px) {
+/* Tablet and medium screens */
+@media (max-width: 768px) {
+  .option-chain-controls {
+    grid-template-columns: repeat(auto-fit, minmax(115px, 1fr));
+    gap: 9px;
+    padding: 10px;
+  }
+
   .option-chain-header,
   .option-row {
-    grid-template-columns: minmax(0, 1fr) 82px 82px 82px minmax(0, 1fr);
-  }
-
-  .option-chain-controls {
-    gap: 12px;
-  }
-
-  .control-group {
-    gap: 6px;
-  }
-
-  .control-group select,
-  .control-group input {
-    width: 105px;
+    grid-template-columns:
+      minmax(0, 1fr) 82px 82px 82px minmax(0, 1fr);
   }
 
   .actions {
@@ -337,7 +381,7 @@
   .action-button {
     flex: 1 1 0;
     width: auto;
-    height: 27px;
+    height: 26px;
     font-size: 9px;
   }
 
@@ -347,57 +391,48 @@
   }
 
   .header-section {
-    font-size: 10px;
+    font-size: 9px;
   }
 }
 
-/* Small screens */
-@media (max-width: 600px) {
+/* Mobile */
+@media (max-width: 480px) {
   .option-chain {
     margin: 10px auto;
     border-radius: 4px;
   }
 
   .option-chain-controls {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
     gap: 10px;
     padding: 10px;
   }
 
-  .control-group {
-    gap: 6px;
-  }
-
   .control-group label {
-    font-size: 11px;
+    font-size: 10px;
   }
 
   .control-group select,
-  .control-group input {
-    width: 95px;
-    height: 32px;
-    padding: 5px 6px;
-    font-size: 12px;
-  }
-
+  .control-group input,
   .strike-distance-display {
-    height: 32px;
-    min-width: 55px;
-    padding: 5px 8px;
-    font-size: 12px;
+    height: 29px;
+    font-size: 11px;
   }
 
   .itm-toggle {
-    margin-left: 0;
+    align-self: center;
+    padding: 0 2px;
   }
 
   .option-chain-header,
   .option-row {
-    grid-template-columns: minmax(0, 1fr) 60px 68px 60px minmax(0, 1fr);
+    grid-template-columns:
+      minmax(0, 1fr) 60px 68px 60px minmax(0, 1fr);
   }
 
   .header-section {
-    padding: 8px 1px;
-    font-size: 9px;
+    padding: 7px 1px;
+    font-size: 8px;
     white-space: normal;
   }
 
@@ -409,7 +444,7 @@
   .action-button {
     flex: 1 1 0;
     width: auto;
-    height: 25px;
+    height: 24px;
     padding: 0 1px;
     font-size: 8px;
   }
@@ -420,12 +455,13 @@
 
   .limit-price {
     width: 100%;
-    padding: 5px 1px;
+    height: 25px;
+    padding: 4px 1px;
     font-size: 10px;
   }
 
   .strike-price {
     padding: 2px;
-    font-size: 11px;
+    font-size: 10px;
   }
 }

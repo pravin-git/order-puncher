@@ -13,7 +13,7 @@ const UNDERLYINGS = {
     defaultATM: 80000,
     strikeDistance: 100,
   },
-  RELIANCE: {
+    RELIANCE: {
     label: "RELIANCE",
     defaultATM: 1200,
     strikeDistance: 20,
@@ -36,7 +36,6 @@ const PUT_ACTIONS = [
   { label: "RD", action: "ROLL_DOWN", className: "roll-down" },
 ];
 
-// Format dates using local calendar values, avoiding UTC date shifts.
 function formatDate(date) {
   const year = date.getFullYear();
   const month = String(date.getMonth() + 1).padStart(2, "0");
@@ -45,8 +44,6 @@ function formatDate(date) {
   return `${year}-${month}-${day}`;
 }
 
-// Return the nearest six expiry dates, including today's date
-// when today itself matches the configured expiry weekday.
 function getExpiryDates(underlying) {
   const today = new Date();
   today.setHours(0, 0, 0, 0);
@@ -65,19 +62,14 @@ function getExpiryDates(underlying) {
       date.setDate(date.getDate() + 1);
     }
   } else {
-    // Default rule for any additional underlying:
-    // last Tuesday of each month.
+    // Default expiry: last Tuesday of each month.
     const date = new Date(today.getFullYear(), today.getMonth(), 1);
 
     while (dates.length < 6) {
       const year = date.getFullYear();
       const month = date.getMonth();
-
-      // Day zero of the following month is the last day
-      // of the current month.
       const lastDay = new Date(year, month + 1, 0);
 
-      // Tuesday = 2. Walk backward from the month's last day.
       lastDay.setDate(
         lastDay.getDate() - ((lastDay.getDay() - 2 + 7) % 7)
       );
@@ -113,7 +105,7 @@ function OptionChainMatrix({
     PUT: {},
   });
 
-  // Always use the configured distance for the selected underlying.
+  // Use the configured strike distance for the selected underlying.
   const currentStrikeDistance = UNDERLYINGS[underlying]
     ? UNDERLYINGS[underlying].strikeDistance
     : strikeDistance ?? 50;
@@ -157,28 +149,6 @@ function OptionChainMatrix({
     });
   };
 
-  const handleATMChange = (event) => {
-    setCurrentATM(event.target.value);
-  };
-
-  const handleStrikeCountChange = (event) => {
-    setSelectedStrikeCount(Number(event.target.value));
-  };
-
-  const handleExpiryChange = (event) => {
-    setExpiry(event.target.value);
-  };
-
-  const handleLimitPriceChange = (type, strike, value) => {
-    setLimitPrices((prev) => ({
-      ...prev,
-      [type]: {
-        ...prev[type],
-        [strike]: value,
-      },
-    }));
-  };
-
   const handleAction = (type, action, strike) => {
     const price = limitPrices[type][strike];
 
@@ -197,8 +167,19 @@ function OptionChainMatrix({
     }
   };
 
+  const handleLimitPriceChange = (type, strike, value) => {
+    setLimitPrices((prev) => ({
+      ...prev,
+      [type]: {
+        ...prev[type],
+        [strike]: value,
+      },
+    }));
+  };
+
   return (
     <div className="option-chain">
+      {/* Compact toolbar */}
       <div className="option-chain-controls">
         <div className="control-group">
           <label htmlFor="underlying">Underlying</label>
@@ -216,11 +197,11 @@ function OptionChainMatrix({
         </div>
 
         <div className="control-group">
-          <label htmlFor="expiry-date">Expiry Date</label>
+          <label htmlFor="expiry-date">Expiry</label>
           <select
             id="expiry-date"
             value={expiry}
-            onChange={handleExpiryChange}
+            onChange={(event) => setExpiry(event.target.value)}
           >
             {expiryOptions.map((date) => (
               <option key={date} value={date}>
@@ -238,17 +219,19 @@ function OptionChainMatrix({
             min="1"
             step="any"
             value={currentATM}
-            onChange={handleATMChange}
-            placeholder="Enter ATM strike"
+            onChange={(event) => setCurrentATM(event.target.value)}
+            placeholder="Enter ATM"
           />
         </div>
 
         <div className="control-group">
-          <label htmlFor="strike-count">Strikes Each Side</label>
+          <label htmlFor="strike-count">Strikes / Side</label>
           <select
             id="strike-count"
             value={selectedStrikeCount}
-            onChange={handleStrikeCountChange}
+            onChange={(event) =>
+              setSelectedStrikeCount(Number(event.target.value))
+            }
           >
             {STRIKE_COUNT_OPTIONS.map((count) => (
               <option key={count} value={count}>
@@ -259,15 +242,16 @@ function OptionChainMatrix({
         </div>
 
         <div className="control-group">
-          <label>Strike Distance</label>
+          <label>Distance</label>
           <div className="strike-distance-display">
             {currentStrikeDistance}
           </div>
         </div>
 
         <div className="itm-toggle">
-          <label>
+          <label htmlFor="display-itm">
             <input
+              id="display-itm"
               type="checkbox"
               checked={showITM}
               onChange={(event) => setShowITM(event.target.checked)}
@@ -277,6 +261,7 @@ function OptionChainMatrix({
         </div>
       </div>
 
+      {/* Matrix header */}
       <div className="option-chain-header">
         <div className="header-section calls-header">CALLS</div>
         <div className="header-section limit-header">CALL LIMIT</div>
@@ -285,6 +270,7 @@ function OptionChainMatrix({
         <div className="header-section puts-header">PUTS</div>
       </div>
 
+      {/* Matrix rows */}
       <div className="option-chain-body">
         {strikes.map((strike) => {
           const isATM = strike === parsedATM;
