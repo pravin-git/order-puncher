@@ -17,7 +17,7 @@
   box-sizing: border-box;
 }
 
-/* Controls: label and input on the same line */
+/* Controls: labels and controls on one line */
 .option-chain-controls {
   display: flex;
   align-items: center;
@@ -44,7 +44,7 @@
 
 .control-group select,
 .control-group input {
-  width: 150px;
+  width: 125px;
   height: 34px;
   padding: 6px 10px;
   border: 1px solid #cbd5e1;
@@ -99,7 +99,7 @@
   accent-color: #2563eb;
 }
 
-/* Option chain header */
+/* Header */
 .option-chain-header {
   display: grid;
   grid-template-columns: minmax(0, 1fr) 100px 100px 100px minmax(0, 1fr);
@@ -138,7 +138,7 @@
   color: #b91c1c;
 }
 
-/* Strike rows */
+/* Rows */
 .option-row {
   display: grid;
   grid-template-columns: minmax(0, 1fr) 100px 100px 100px minmax(0, 1fr);
@@ -168,6 +168,12 @@
   border-bottom: 1px solid #e5c76b;
 }
 
+.atm-row .strike-price {
+  background-color: #fff3cd;
+  color: #8a5a00;
+  font-weight: 700;
+}
+
 .atm-row:hover,
 .atm-row:hover .actions,
 .atm-row:hover .limit-price-cell,
@@ -175,7 +181,7 @@
   background-color: #bfdbfe !important;
 }
 
-/* Action button groups */
+/* Action groups */
 .actions {
   display: flex;
   align-items: center;
@@ -194,7 +200,7 @@
   border-left: 1px solid #dddddd;
 }
 
-/* Limit price cells */
+/* Limit price fields */
 .limit-price-cell {
   display: flex;
   align-items: center;
@@ -243,12 +249,6 @@
   font-size: 13px;
   font-weight: 600;
   text-align: center;
-}
-
-.atm-row .strike-price {
-  background-color: #fff3cd;
-  color: #8a5a00;
-  font-weight: 700;
 }
 
 /* Action buttons */
@@ -301,7 +301,7 @@
   background-color: #f59e0b;
 }
 
-/* Validation message */
+/* Empty state */
 .empty-state {
   padding: 20px;
   text-align: center;
@@ -314,6 +314,19 @@
   .option-chain-header,
   .option-row {
     grid-template-columns: minmax(0, 1fr) 82px 82px 82px minmax(0, 1fr);
+  }
+
+  .option-chain-controls {
+    gap: 12px;
+  }
+
+  .control-group {
+    gap: 6px;
+  }
+
+  .control-group select,
+  .control-group input {
+    width: 105px;
   }
 
   .actions {
@@ -335,19 +348,6 @@
 
   .header-section {
     font-size: 10px;
-  }
-
-  .option-chain-controls {
-    gap: 12px;
-  }
-
-  .control-group {
-    gap: 6px;
-  }
-
-  .control-group select,
-  .control-group input {
-    width: 125px;
   }
 }
 
@@ -373,7 +373,7 @@
 
   .control-group select,
   .control-group input {
-    width: 110px;
+    width: 95px;
     height: 32px;
     padding: 5px 6px;
     font-size: 12px;

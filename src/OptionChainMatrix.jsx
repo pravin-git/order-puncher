@@ -15,6 +15,8 @@ const UNDERLYINGS = {
   },
 };
 
+const STRIKE_COUNT_OPTIONS = [1, 2, 3, 5, 10, 15, 20, 25, 30];
+
 const CALL_ACTIONS = [
   { label: "RD", action: "ROLL_DOWN", className: "roll-down" },
   { label: "RU", action: "ROLL_UP", className: "roll-up" },
@@ -37,19 +39,19 @@ function OptionChainMatrix({
 }) {
   const [underlying, setUnderlying] = useState("NIFTY");
   const [currentATM, setCurrentATM] = useState(String(atmStrike));
+  const [selectedStrikeCount, setSelectedStrikeCount] =
+    useState(Number(strikeCount) || 5);
   const [showITM, setShowITM] = useState(true);
 
   const [limitPrices, setLimitPrices] = useState({
     CALL: {},
     PUT: {},
   });
-
-  const currentStrikeDistance =
-    strikeDistance ?? UNDERLYINGS[underlying].strikeDistance;
+const currentStrikeDistance = UNDERLYINGS[underlying].strikeDistance;
 
   const rowCount = Math.max(
     0,
-    Math.floor(Number(strikeCount) || 0)
+    Math.floor(Number(selectedStrikeCount) || 0)
   );
 
   const parsedATM = Number(currentATM);
@@ -59,13 +61,11 @@ function OptionChainMatrix({
     Number.isFinite(parsedATM) &&
     parsedATM > 0;
 
-  // Generate strikes around the selected ATM.
   const strikes = validATM
     ? Array.from(
         { length: rowCount * 2 + 1 },
         (_, index) =>
-          parsedATM +
-          (index - rowCount) * currentStrikeDistance
+          parsedATM + (index - rowCount) * currentStrikeDistance
       )
     : [];
 
@@ -73,9 +73,7 @@ function OptionChainMatrix({
     const selected = event.target.value;
 
     setUnderlying(selected);
-    setCurrentATM(
-      String(UNDERLYINGS[selected].defaultATM)
-    );
+    setCurrentATM(String(UNDERLYINGS[selected].defaultATM));
 
     setLimitPrices({
       CALL: {},
@@ -85,6 +83,10 @@ function OptionChainMatrix({
 
   const handleATMChange = (event) => {
     setCurrentATM(event.target.value);
+  };
+
+  const handleStrikeCountChange = (event) => {
+    setSelectedStrikeCount(Number(event.target.value));
   };
 
   const handleLimitPriceChange = (type, strike, value) => {
@@ -106,9 +108,7 @@ function OptionChainMatrix({
       action,
       strike,
       limitPrice:
-        price === "" || price == null
-          ? null
-          : Number(price),
+        price === "" || price == null ? null : Number(price),
     };
 
     if (typeof onAction === "function") {
@@ -118,33 +118,24 @@ function OptionChainMatrix({
 
   return (
     <div className="option-chain">
-      {/* UNDERLYING AND ATM CONTROLS */}
       <div className="option-chain-controls">
         <div className="control-group">
-          <label htmlFor="underlying">
-            Underlying
-          </label>
-
+          <label htmlFor="underlying">Underlying</label>
           <select
             id="underlying"
             value={underlying}
             onChange={handleUnderlyingChange}
           >
-            {Object.entries(UNDERLYINGS).map(
-              ([key, config]) => (
-                <option key={key} value={key}>
-                  {config.label}
-                </option>
-              )
-            )}
+            {Object.entries(UNDERLYINGS).map(([key, config]) => (
+              <option key={key} value={key}>
+                {config.label}
+              </option>
+            ))}
           </select>
         </div>
 
         <div className="control-group">
-          <label htmlFor="atm-strike">
-            ATM Strike
-          </label>
-
+          <label htmlFor="atm-strike">ATM Strike</label>
           <input
             id="atm-strike"
             type="number"
@@ -157,8 +148,22 @@ function OptionChainMatrix({
         </div>
 
         <div className="control-group">
-          <label>Strike Distance</label>
+          <label htmlFor="strike-count">Strikes Each Side</label>
+          <select
+            id="strike-count"
+            value={selectedStrikeCount}
+            onChange={handleStrikeCountChange}
+          >
+            {STRIKE_COUNT_OPTIONS.map((count) => (
+              <option key={count} value={count}>
+                {count}
+              </option>
+            ))}
+          </select>
+        </div>
 
+        <div className="control-group">
+          <label>Strike Distance</label>
           <div className="strike-distance-display">
             {currentStrikeDistance}
           </div>
@@ -169,39 +174,21 @@ function OptionChainMatrix({
             <input
               type="checkbox"
               checked={showITM}
-              onChange={(event) =>
-                setShowITM(event.target.checked)
-              }
+              onChange={(event) => setShowITM(event.target.checked)}
             />
             Display ITM
           </label>
         </div>
       </div>
 
-      {/* TABLE HEADER */}
       <div className="option-chain-header">
-        <div className="header-section calls-header">
-          CALLS
-        </div>
-
-        <div className="header-section limit-header">
-          CALL LIMIT
-        </div>
-
-        <div className="header-section strike-header">
-          STRIKE
-        </div>
-
-        <div className="header-section limit-header">
-          PUT LIMIT
-        </div>
-
-        <div className="header-section puts-header">
-          PUTS
-        </div>
+        <div className="header-section calls-header">CALLS</div>
+        <div className="header-section limit-header">CALL LIMIT</div>
+        <div className="header-section strike-header">STRIKE</div>
+        <div className="header-section limit-header">PUT LIMIT</div>
+        <div className="header-section puts-header">PUTS</div>
       </div>
 
-      {/* OPTION ROWS */}
       <div className="option-chain-body">
         {strikes.map((strike) => {
           const isATM = strike === parsedATM;
@@ -214,11 +201,8 @@ function OptionChainMatrix({
           return (
             <div
               key={strike}
-              className={`option-row ${
-                isATM ? "atm-row" : ""
-              }`}
+              className={`option-row ${isATM ? "atm-row" : ""}`}
             >
-              {/* CALL ACTIONS: RD RU SELL BUY */}
               <div className="actions call-actions">
                 {showCallSide &&
                   CALL_ACTIONS.map((item) => (
@@ -228,11 +212,7 @@ function OptionChainMatrix({
                       className={`action-button ${item.className}`}
                       title={`CALL ${item.action} ${strike}`}
                       onClick={() =>
-                        handleAction(
-                          "CALL",
-                          item.action,
-                          strike
-                        )
+                        handleAction("CALL", item.action, strike)
                       }
                     >
                       {item.label}
@@ -240,7 +220,6 @@ function OptionChainMatrix({
                   ))}
               </div>
 
-              {/* CALL LIMIT PRICE */}
               <div className="limit-price-cell">
                 {showCallSide && (
                   <input
@@ -261,12 +240,10 @@ function OptionChainMatrix({
                 )}
               </div>
 
-              {/* STRIKE PRICE */}
               <div className="strike-price">
                 {strike.toLocaleString("en-IN")}
               </div>
 
-              {/* PUT LIMIT PRICE */}
               <div className="limit-price-cell">
                 {showPutSide && (
                   <input
@@ -287,7 +264,6 @@ function OptionChainMatrix({
                 )}
               </div>
 
-              {/* PUT ACTIONS: BUY SELL RU RD */}
               <div className="actions put-actions">
                 {showPutSide &&
                   PUT_ACTIONS.map((item) => (
@@ -297,11 +273,7 @@ function OptionChainMatrix({
                       className={`action-button ${item.className}`}
                       title={`PUT ${item.action} ${strike}`}
                       onClick={() =>
-                        handleAction(
-                          "PUT",
-                          item.action,
-                          strike
-                        )
+                        handleAction("PUT", item.action, strike)
                       }
                     >
                       {item.label}
